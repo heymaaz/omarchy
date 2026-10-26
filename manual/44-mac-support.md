@@ -10,9 +10,9 @@ In a simple test, we were able to achieve 36% performance gains on a 2019 MacBoo
 
 ### Installing Omarchy on Mac
 
-Omarchy only supports being the **only** OS installed at the moment. During the installation, the drive will be wiped and MacOS will no longer be bootable.
+Omarchy supports both a full-disk install and a free-space install. A full-disk install erases the selected drive and removes the existing macOS installation. To keep macOS, first create unallocated space and choose **Free space install** in the installer. See [Dual Boot Install](50-dual-boot-install.md) for the general procedure.
 
-You can still restore it later via Internet Recovery if you'd like.
+Keeping macOS is especially useful on Macs with a T1 or T2 chip. Some hardware support needs files or machine-specific data from this Mac's macOS installation or recovery environment. If macOS has already been erased, it can be restored later through Internet Recovery, but restoring it first is the simpler recovery path.
 
 For the sake of this part, we'll assume you've already reviewed [Getting Started](02-getting-started.md) and have your USB drive ready. If you don't go ahead and do that now.
 
@@ -35,7 +35,7 @@ It is necessary to disable Apple's Secure Boot in order to boot the bootable USB
 3. Select the orange EFI Boot device
 4. Proceed with the [install as normal](02-getting-started.md)
 
-The installer detects Mac hardware and applies the needed fixes automatically: Broadcom Wi-Fi drivers and firmware, the SPI keyboard driver on the MacBook models that need it, and an NVMe suspend fix for those same models.
+The installer detects Mac hardware and applies the needed fixes automatically: Broadcom Wi-Fi drivers and firmware where available, the SPI keyboard driver on the MacBook models that need it, and an NVMe suspend fix for those same models. Hardware-specific support can still require additional firmware, packages, or upstream fixes.
 
 ### Known Limitations
 
@@ -50,8 +50,11 @@ The Apple T1 chip was introduced in late 2016 and used exclusively in the first-
 
 #### Known Issues
 
-- Touch Bar is non-functional
-- Sound is not functioning
+- Touch Bar and audio support require additional community-maintained software.
+- The Touch Bar project is [mbp-t1-touchbar](https://github.com/Seborider/mbp-t1-touchbar).
+- Touch ID and the T1 private link are provided by [T1Bridge](https://github.com/standardagents/t1bridge).
+
+These components include kernel modules. Prefer their DKMS packages where available so modules are rebuilt automatically when the kernel is updated. Confirm that all required modules and the boot image for the target kernel build successfully before rebooting.
 
 #### Devices with T2 Chip
 
@@ -70,3 +73,5 @@ The Apple T2 Security Chip was introduced in 2017. The T2 chip was discontinued 
 - MacBook Pro 15-inch (2020) – Model: A1990
 
 On these models, the installer automatically sets up the patched `linux-t2` kernel, the T2 audio configuration, Apple's Broadcom Wi-Fi/Bluetooth firmware, and fan control via `t2fanrd`. The Touch Bar runs on the kernel's built-in Boot Camp-style support.
+
+The T2 Wi-Fi firmware fetcher reads firmware from an on-disk macOS volume. A full-disk installation that removed macOS may therefore boot without working Wi-Fi until the firmware is supplied from a macOS installation or a supported recovery image. Preserve macOS or prepare a recovery path before installing on a T2 Mac.
